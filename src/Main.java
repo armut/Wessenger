@@ -1,5 +1,7 @@
 import fenestra.Palette;
-
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import javax.swing.*;
 
 /**
@@ -7,6 +9,7 @@ import javax.swing.*;
  */
 public class Main {
     private static Messaging m;
+    private static Login l;
     private static final int WIDTH = 640;
     private static final int HEIGHT = 480;
     
@@ -14,8 +17,10 @@ public class Main {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                m = new Messaging(Palette.deepTaupe, Palette.paynesGrey,
-                        Palette.middleRedPurple, "Messaging Application", WIDTH, HEIGHT);
+                //m = new Messaging(Palette.deepTaupe, Palette.paynesGrey,
+                //        Palette.middleRedPurple, "Messaging Application", WIDTH, HEIGHT);
+                l = new Login(Palette.deepTaupe, Palette.paynesGrey,
+                        Palette.middleRedPurple, "Log In", WIDTH/4, HEIGHT/4);
             }
         });
     }

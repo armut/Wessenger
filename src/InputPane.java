@@ -1,7 +1,6 @@
 import fenestra.Palette;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 
 /**
@@ -13,10 +12,14 @@ public class InputPane extends JPanel {
     public InputPane() {
         setLayout(new BorderLayout());
         
-        jtfMessage = new JTextField("Your message here");
+        JPanel jpnlMessage = new JPanel();
+        jpnlMessage.setBorder(BorderFactory.createLineBorder(Palette.vividCerulean));
+        jtfMessage = new JTextField("");
+        jpnlMessage.add(jtfMessage);
+        
         jbSend = new JButton("Send");
         
-        add(jtfMessage, BorderLayout.LINE_START);
+        add(jtfMessage, BorderLayout.CENTER);
         add(jbSend, BorderLayout.LINE_END);
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(
                 Palette.desertSand, 3), "Message"));
