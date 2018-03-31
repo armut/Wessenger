@@ -25,4 +25,5 @@ public class Messaging extends Fenestra {
         
         add(jpnlLoom, BorderLayout.CENTER);
     }
+    
 }
