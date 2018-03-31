@@ -49,11 +49,12 @@ public class Login extends Fenestra {
             if (rs.next()) {
                 Main.currentUserId = rs.getInt("id");
                 Main.currentUserName = rs.getString("nick_name");
+                Main.notifyRemote(Main.currentUserId);
                 return true;
             } else {
                 return false;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             return false;
         }
