@@ -23,7 +23,7 @@ public class SessionPane extends JPanel {
         tableModel.addColumn("Sessions");
         tableModel.addColumn("Session Id");
         sessionTable = new JTable(tableModel);
-        sessionTable.setFillsViewportHeight(true);
+        //sessionTable.setFillsViewportHeight(true);
         sessionTable.setShowGrid(false);
         sessionTable.setTableHeader(null);
         sessionTable.getColumnModel().getColumn(1).setMaxWidth(0);

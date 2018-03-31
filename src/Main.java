@@ -13,7 +13,7 @@ public class Main {
     public static MessagingFrame m;
     public static Login l;
     public static final int WIDTH = 640;
-    public static final int HEIGHT = 480;
+    public static final int HEIGHT = 280;
     public static int currentUserId = -1;
     public static int currentSessionId = -1;
     public static String currentUserName = "";
@@ -69,7 +69,7 @@ public class Main {
     }
     
     public static void populateSessionHistory(ResultSet rs) throws SQLException {
-        SessionHistoryPane pane = m.getSessionHistoryPane();
+        JPanel pane = m.getSessionHistoryPane().getPane();
         pane.removeAll();
         while (rs.next()) {
             pane.add(
