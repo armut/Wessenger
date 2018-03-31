@@ -9,11 +9,7 @@ import java.awt.*;
 public class SessionHistoryPane extends JPanel {
     private JPanel jpnlConversation;
     public SessionHistoryPane() {
-        setLayout(new BorderLayout());
-        
-        jpnlConversation = new JPanel();
-        add(jpnlConversation);
-    
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(
                 Palette.desertSand, 3), "Session History"));
     }
