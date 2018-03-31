@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -45,7 +44,8 @@ public class Login extends Fenestra {
     private boolean login() {
         try {
             Statement statement = DBCon.conn.createStatement();
-            ResultSet rs = statement.executeQuery("select id, nick_name from user where nick_name=" + "\"" + jtfLogin.getText() + "\"");
+            ResultSet rs = statement.executeQuery(
+                    "select id, nick_name from user where nick_name=" + "\"" + jtfLogin.getText() + "\"");
             if (rs.next()) {
                 Main.currentUserId = rs.getInt("id");
                 Main.currentUserName = rs.getString("nick_name");
@@ -67,8 +67,8 @@ public class Login extends Fenestra {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        Main.m = new Messaging(Palette.deepTaupe, Palette.paynesGrey,
-                                Palette.middleRedPurple, "Messaging Application - " + Main.currentUserName, Main.WIDTH, Main.HEIGHT);
+                        Main.m = new MessagingFrame(Palette.deepTaupe, Palette.paynesGrey,
+                                Palette.middleRedPurple, "MessagingFrame Application - " + Main.currentUserName, Main.WIDTH, Main.HEIGHT);
                         Login.this.dispose();
                     }
                 });
