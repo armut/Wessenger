@@ -1,7 +1,10 @@
+import com.sun.istack.internal.Nullable;
 import fenestra.Palette;
 import javax.swing.*;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -42,6 +45,32 @@ public class Main {
         if (currentListeningPort == -1) {
             System.out.println("Could not acquire a port address.");
             System.exit(0);
+        } else {
+            // Start waiting for requests.
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while(true) {
+                                try {
+                                    System.out.println("Waiting...");
+                                    Socket socket = serverSocket.accept();
+                                    BufferedReader incoming = new BufferedReader(
+                                            new InputStreamReader(socket.getInputStream()));
+                                    m.getSessionHistoryPane().getPane().add(
+                                            new MessageBox("anonymous", String.valueOf(Calendar.getInstance().getTime().getTime()), incoming.readLine()));
+                                    m.getSessionHistoryPane().getPane().revalidate();
+                                    m.getSessionHistoryPane().getPane().repaint();
+                                } catch (IOException e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
+                        }
+                    }).start();
+                }
+            });
         }
         
         SwingUtilities.invokeLater(new Runnable() {
@@ -112,15 +141,38 @@ public class Main {
         socket.close();
     }
     
+    @Nullable
+    public static String getSessionRecipients() {
+        String result = "";
+        try {
+            Statement statement = DBCon.conn.createStatement();
+            ResultSet rs = statement.executeQuery("select user_id from session_user_lookup " +
+                    "where session_id=" + currentSessionId + " and user_id<>" + currentUserId);
+            while(rs.next()) {
+                if (!result.equals(""))
+                    result += ",";
+                result += rs.getString("user_id");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+        return result;
+    }
+    
     public static void sendMessage(String message) {
         boolean successful = false;
         try {
             // Try to send the message over TCP.
             Socket socket = new Socket(REMOTE_HOST, REMOTE_PORT);
             DataOutputStream outgoing = new DataOutputStream(socket.getOutputStream());
-            outgoing.writeBytes(message);
+            // Get the recipient list.
+            String recipients = getSessionRecipients();
+            if (recipients != null) {
+                outgoing.writeBytes("recipients:" + recipients + ":message:" + message);
+                successful = true;
+            }
             socket.close();
-            successful = true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

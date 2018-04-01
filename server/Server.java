@@ -2,6 +2,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Arrays;
 import java.io.*;
 import java.net.*;
 
@@ -31,6 +32,27 @@ public class Server {
                         String hostName = message.split(":")[1].split(",")[1];
                         int port = Integer.parseInt(message.split(":")[1].split(",")[2]);
                         userMap.put(id, new HostPort(hostName, port));               
+                    } else if (message.split(":")[0].equals("recipients")) {
+                        String[] recipients = message.split(":")[1].split(",");
+                        String[] splitMessage = Arrays.copyOfRange(
+                            message.split(":"), 3, message.split(":").length);
+                        String outMessage = "";
+                        for (String m : splitMessage)
+                            outMessage += m;
+                        for (String recipient : recipients) {
+                            int recipient_id = Integer.parseInt(recipient);
+                            HostPort user = userMap.get(recipient_id);
+                            try {
+                                Socket socket = new Socket(
+                                    user.getHostName().split("/")[1], user.getPortNumber());
+                                DataOutputStream outgoing = new DataOutputStream(socket.getOutputStream());
+                                outgoing.writeBytes(outMessage);
+                                System.out.println("<<< " + outMessage);
+                                socket.close();
+                            } catch (IOException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
                     }
                     /*Set s = userMap.entrySet();
                     Iterator i = s.iterator();
@@ -58,6 +80,9 @@ public class Server {
         public String toString() {
             return hostName + "," + String.valueOf(portNumber);
         }
+
+        public String getHostName() { return hostName; }
+        public int getPortNumber() { return portNumber; }
     }
 
 }
