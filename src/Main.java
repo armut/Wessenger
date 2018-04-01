@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Date;
@@ -28,7 +27,8 @@ public class Main {
     public static int currentListeningPort = -1;
     public static ServerSocket serverSocket;
     public static final int REMOTE_PORT = 9898;
-    public static final String REMOTE_HOST = "127.0.0.1";
+    public static final String REMOTE_HOST = "127.0.0.1"; //TODO:dynamic.
+    public static String LOCAL_HOST = "";
     public static Thread listenerThread;
     
     public static void main(String[] args) {
@@ -83,13 +83,31 @@ public class Main {
         Socket socket = serverSocket.accept();
         BufferedReader incoming = new BufferedReader(
                 new InputStreamReader(socket.getInputStream()));
+        String receipt = incoming.readLine();
+        String sender = getNickNameById(receipt.split(":")[0]);
+        String messageBody = receipt.split(":")[1];
         m.getSessionHistoryPane().getPane().add(
-                new MessageBox("anonymous", String.valueOf(Calendar.getInstance().getTime().getTime()), incoming.readLine()));
+                new MessageBox(sender, String.valueOf(Calendar.getInstance().getTime().getTime()), messageBody));
         m.getSessionHistoryPane().getPane().revalidate();
         m.getSessionHistoryPane().getPane().repaint();
     }
     
-    public static boolean login(String nickName) {
+    private static String getNickNameById(String id) {
+        try {
+            DBCon.connect();
+            Statement statement = DBCon.conn.createStatement();
+            ResultSet rs = statement.executeQuery("select nick_name from user where id=" + id);
+            if (rs.next())
+                return rs.getString("nick_name");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            DBCon.disconnect();
+        }
+        return "";
+    }
+    
+    public static boolean login(String nickName, String localHost) {
         try {
             DBCon.connect();
             Statement statement = DBCon.conn.createStatement();
@@ -98,7 +116,7 @@ public class Main {
             if (rs.next()) {
                 Main.currentUserId = rs.getInt("id");
                 Main.currentUserName = rs.getString("nick_name");
-                Main.notifyRemote(Main.currentUserId);
+                Main.notifyRemote(rs.getInt("id"), localHost);
                 return true;
             } else {
                 return false;
@@ -168,11 +186,11 @@ public class Main {
         }
     }
     
-    public static void notifyRemote(int userId) throws IOException {
+    public static void notifyRemote(int userId, String localHost) throws IOException {
         // Notify remote side about my host and port.
         Socket socket = new Socket(REMOTE_HOST, REMOTE_PORT);
         DataOutputStream outgoing = new DataOutputStream(socket.getOutputStream());
-        outgoing.writeBytes("info:" + String.valueOf(userId) + "," + InetAddress.getLocalHost() + "," + currentListeningPort);
+        outgoing.writeBytes("info:" + String.valueOf(userId) + "," + localHost + "," + currentListeningPort);
         socket.close();
     }
     
@@ -207,7 +225,10 @@ public class Main {
             // Get the recipient list.
             String recipients = getSessionRecipients();
             if (recipients != null) {
-                outgoing.writeBytes("recipients:" + recipients + ":message:" + message);
+                outgoing.writeBytes(
+                        "recipients:" + recipients +
+                        ":sender:" + String.valueOf(currentUserId) +
+                        ":message:" + message);
                 successful = true;
             }
             socket.close();
