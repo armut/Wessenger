@@ -29,42 +29,13 @@ public class Login extends Fenestra {
         jpnlLoom.add(jbLogin, BorderLayout.PAGE_END);
         jpnlLoom.setBackground(bgColor);
         add(jpnlLoom);
-        
-        connectToDB();
-    }
-    
-    private void connectToDB() {
-        try {
-            DBCon.connect();
-        } catch (SQLException e){
-            System.out.println(e.getMessage());
-        }
-    }
-    
-    private boolean login() {
-        try {
-            Statement statement = DBCon.conn.createStatement();
-            ResultSet rs = statement.executeQuery(
-                    "select id, nick_name from user where nick_name=" + "\"" + jtfLogin.getText() + "\"");
-            if (rs.next()) {
-                Main.currentUserId = rs.getInt("id");
-                Main.currentUserName = rs.getString("nick_name");
-                Main.notifyRemote(Main.currentUserId);
-                return true;
-            } else {
-                return false;
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
     }
     
     private class LoginListener implements ActionListener {
     
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            if (login()) {
+            if (Main.login(jtfLogin.getText())) {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {

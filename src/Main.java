@@ -29,6 +29,7 @@ public class Main {
     public static ServerSocket serverSocket;
     public static final int REMOTE_PORT = 9898;
     public static final String REMOTE_HOST = "127.0.0.1";
+    public static Thread listenerThread;
     
     public static void main(String[] args) {
         // Acquire a port and open a socket.
@@ -47,28 +48,23 @@ public class Main {
             System.exit(0);
         } else {
             // Start waiting for requests.
+            listenerThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while(serverSocket != null) {
+                        try {
+                            acceptMessages();
+                        } catch (IOException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
+                }
+            });
+            
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            while(true) {
-                                try {
-                                    System.out.println("Waiting...");
-                                    Socket socket = serverSocket.accept();
-                                    BufferedReader incoming = new BufferedReader(
-                                            new InputStreamReader(socket.getInputStream()));
-                                    m.getSessionHistoryPane().getPane().add(
-                                            new MessageBox("anonymous", String.valueOf(Calendar.getInstance().getTime().getTime()), incoming.readLine()));
-                                    m.getSessionHistoryPane().getPane().revalidate();
-                                    m.getSessionHistoryPane().getPane().repaint();
-                                } catch (IOException e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            }
-                        }
-                    }).start();
+                    listenerThread.start();
                 }
             });
         }
@@ -82,11 +78,45 @@ public class Main {
         });
     }
     
+    private static void acceptMessages() throws IOException {
+        System.out.println("Listening for messages on port " + String.valueOf(currentListeningPort));
+        Socket socket = serverSocket.accept();
+        BufferedReader incoming = new BufferedReader(
+                new InputStreamReader(socket.getInputStream()));
+        m.getSessionHistoryPane().getPane().add(
+                new MessageBox("anonymous", String.valueOf(Calendar.getInstance().getTime().getTime()), incoming.readLine()));
+        m.getSessionHistoryPane().getPane().revalidate();
+        m.getSessionHistoryPane().getPane().repaint();
+    }
+    
+    public static boolean login(String nickName) {
+        try {
+            DBCon.connect();
+            Statement statement = DBCon.conn.createStatement();
+            ResultSet rs = statement.executeQuery(
+                    "select id, nick_name from user where nick_name=" + "\"" + nickName + "\"");
+            if (rs.next()) {
+                Main.currentUserId = rs.getInt("id");
+                Main.currentUserName = rs.getString("nick_name");
+                Main.notifyRemote(Main.currentUserId);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        } finally {
+            DBCon.disconnect();
+        }
+    }
+    
     public static void loadSessionHistory() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 try {
+                    DBCon.connect();
                     Statement statement = DBCon.conn.createStatement();
                     ResultSet rs = statement.executeQuery(
                             "select `date`, message, nick_name FROM " +
@@ -96,6 +126,8 @@ public class Main {
                     populateSessionHistory(rs);
                 } catch (SQLException e) {
                     System.out.println(e.getMessage());
+                } finally {
+                    DBCon.disconnect();
                 }
             }
         });
@@ -106,6 +138,7 @@ public class Main {
             @Override
             public void run() {
                 try {
+                    DBCon.connect();
                     Statement statement = DBCon.conn.createStatement();
                     ResultSet rs = statement.executeQuery(
                             "select session_id, name from " +
@@ -117,6 +150,8 @@ public class Main {
                     }
                 } catch (SQLException e) {
                     System.out.println(e.getMessage());
+                } finally {
+                    DBCon.disconnect();
                 }
             }
         });
@@ -145,6 +180,7 @@ public class Main {
     public static String getSessionRecipients() {
         String result = "";
         try {
+            DBCon.connect();
             Statement statement = DBCon.conn.createStatement();
             ResultSet rs = statement.executeQuery("select user_id from session_user_lookup " +
                     "where session_id=" + currentSessionId + " and user_id<>" + currentUserId);
@@ -156,6 +192,8 @@ public class Main {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
+        } finally {
+            DBCon.disconnect();
         }
         return result;
     }
@@ -184,6 +222,7 @@ public class Main {
                 @Override
                 public void run() {
                     try {
+                        DBCon.connect();
                         Statement statement = DBCon.conn.createStatement();
                         statement.executeUpdate(
                                 "insert into session_history (`date`, message, user_id, session_id) " +
@@ -194,6 +233,8 @@ public class Main {
                         m.getSessionHistoryPane().getPane().repaint();
                     } catch (SQLException e) {
                         System.out.println(e.getMessage());
+                    } finally {
+                        DBCon.disconnect();
                     }
                 }
             });

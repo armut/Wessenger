@@ -3,9 +3,9 @@ import fenestra.Palette;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
 
 /**
  * zamma on 3/29/18.
@@ -35,7 +35,30 @@ public class MessagingFrame extends Fenestra {
         add(jpnlLoom, BorderLayout.CENTER);
         
         Main.loadSessions(sessionPane);
-    }
+        
+        // Finish the server thread after closing this frame
+        // to exit the application.
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent windowEvent) {
+                super.windowClosed(windowEvent);
+                try {
+                    Main.serverSocket.close();
+                    Main.serverSocket = null;
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
     
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                super.windowClosing(windowEvent);
+                System.out.println("meraba");
+    
+                
+            }
+        });
+    }
+     
     public SessionHistoryPane getSessionHistoryPane() { return sessionHistoryPane; }
 }

@@ -9,13 +9,20 @@ public class DBCon {
     public static Connection conn = null;
     
     public static void connect() throws SQLException{
-        String connStr = "jdbc:sqlite:squirrel.sqlite";
-        conn = DriverManager.getConnection(connStr);
+        if (conn == null) {
+            String connStr = "jdbc:sqlite:squirrel.sqlite";
+            conn = DriverManager.getConnection(connStr);
+        }
     }
     
-    public static void disconnect() throws SQLException {
+    public static void disconnect() {
         if (conn != null) {
-            conn.close();
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+            conn = null;
         }
     }
 }
