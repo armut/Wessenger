@@ -1,6 +1,8 @@
 import com.sun.istack.internal.Nullable;
 import fenestra.Palette;
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
+import javax.swing.plaf.nimbus.State;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -54,7 +57,7 @@ public class Main {
                     while(serverSocket != null) {
                         try {
                             acceptMessages();
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             System.out.println(e.getMessage());
                         }
                     }
@@ -155,6 +158,7 @@ public class Main {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                sessionPane.getSessionTableModel().setRowCount(0);
                 try {
                     DBCon.connect();
                     Statement statement = DBCon.conn.createStatement();
@@ -178,6 +182,8 @@ public class Main {
     public static void populateSessionHistory(ResultSet rs) throws SQLException {
         JPanel pane = m.getSessionHistoryPane().getPane();
         pane.removeAll();
+        pane.revalidate();
+        pane.repaint();
         while (rs.next()) {
             pane.add(
                     new MessageBox(rs.getString("nick_name"), rs.getString("date"), rs.getString("message")));
@@ -260,5 +266,69 @@ public class Main {
                 }
             });
         }
+    }
+    
+    public static void openSession(String sessionName, UserGroup group) {
+        try {
+            DBCon.connect();
+            Statement statement = DBCon.conn.createStatement();
+            statement.executeUpdate("insert into Session (`name`)" +
+                    " values(\"" + sessionName +"\")");
+            ResultSet rs = statement.executeQuery("select id from Session order by id desc limit 1");
+            int id = -1;
+            if (rs.next())
+                id = rs.getInt("id");
+            if (id != -1) {
+                ArrayList<UserGroup.User> users = group.getUsers();
+                for( UserGroup.User user : users ) {
+                    statement.executeUpdate("insert into session_user_lookup (session_id, user_id) " +
+                            "values(" + String.valueOf(id) + "," + user.getId() + ")");
+                }
+                
+                // And one for the current user:
+                statement.executeUpdate("insert into session_user_lookup (session_id, user_id)" +
+                        " values(" + String.valueOf(id) + "," + currentUserId + ")");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            DBCon.disconnect();
+        }
+    }
+    
+    public static ArrayList<UserGroup> fetchUserGroups() {
+        // Make an array of UserGroups.
+        ArrayList<UserGroup> groups = new ArrayList<>();
+        try {
+            DBCon.connect();
+            Statement statement = DBCon.conn.createStatement();
+            ResultSet rs = statement.executeQuery("select id, name from user_group");
+            while (rs.next()) {
+                int currentGroupId = rs.getInt("id");
+                UserGroup group = new UserGroup(rs.getString("name"), currentGroupId);
+                Statement statementForGroupUsers = DBCon.conn.createStatement();
+                ResultSet rs2 = statementForGroupUsers.executeQuery("select nick_name, user_id from user_group_lookup " +
+                        "join user on user_group_lookup.user_id = user.id " +
+                        "where user_group_id=" + String.valueOf(currentGroupId) + " and user_id<>" + currentUserId);
+                while(rs2.next()) {
+                    group.addUser(new UserGroup().new User(rs2.getString("nick_name"), rs2.getInt("user_id")));
+                }
+                groups.add(group);
+            }
+            
+            // Add single users as a group of one element.
+            Statement statementForUsers = DBCon.conn.createStatement();
+            ResultSet rs3 = statementForUsers.executeQuery("select id, nick_name from user where id<>" + currentUserId);
+            while (rs3.next()) {
+                UserGroup group = new UserGroup();
+                group.addUser(new UserGroup().new User(rs3.getString("nick_name"), rs3.getInt("id")));
+                groups.add(group);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            DBCon.disconnect();
+        }
+        return groups;
     }
 }

@@ -61,4 +61,6 @@ public class MessagingFrame extends Fenestra {
     }
      
     public SessionHistoryPane getSessionHistoryPane() { return sessionHistoryPane; }
+    
+    public SessionPane getSessionPane() { return sessionPane; }
 }

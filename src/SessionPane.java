@@ -1,11 +1,13 @@
 import fenestra.Palette;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Vector;
 
 /**
  * zamma on 3/29/18.
@@ -15,10 +17,12 @@ public class SessionPane extends JPanel {
     private JButton newSession;
     private SessionTableModel tableModel;
     private ListSelectionModel listSelectionModel;
+    private OpenSessionDialog os;
     
     public SessionPane(Color bgColor, int width, int height) {
         setLayout(new BorderLayout());
-        
+        os = new OpenSessionDialog(
+                Main.m, Palette.deepTaupe, Palette.paynesGrey, Palette.middleRedPurple, "New Session", 200, 100);
         tableModel = new SessionTableModel();
         tableModel.addColumn("Sessions");
         tableModel.addColumn("Session Id");
@@ -38,6 +42,7 @@ public class SessionPane extends JPanel {
         JPanel jpnlButton = new JPanel();
         jpnlButton.setBorder(BorderFactory.createLineBorder(Palette.vividCerulean));
         newSession = new JButton("+");
+        newSession.addActionListener(new ButtonListener());
         jpnlButton.add(newSession);
         
         add(jpnlButton, BorderLayout.PAGE_END);
@@ -65,6 +70,27 @@ public class SessionPane extends JPanel {
                 Main.loadSessionHistory();
             }
             
+        }
+    }
+    
+    private class ButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            os.setVisible(true);
+        }
+    }
+    
+    public class SessionTableModel extends DefaultTableModel {
+        public void addSessionRow(Session s) {
+            Vector<Object> entity = new Vector<>(2);
+            entity.addElement(s.getSessionName());
+            entity.addElement(s.getSessionId());
+            this.addRow(entity);
+        }
+        
+        @Override
+        public boolean isCellEditable(int i, int i1) {
+            return false;
         }
     }
 }

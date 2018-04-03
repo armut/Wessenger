@@ -8,7 +8,7 @@ import java.net.*;
 
 public class Server {
     public static void main(String[] args) {
-        HashMap<Integer, HostPort> userMap = new HashMap<>();
+        HashMap<Integer, HostPort> userMap = new HashMap<>(); // silinti.
 
         ServerSocket serverSocket = null;
         try {
@@ -52,8 +52,7 @@ public class Server {
                                 outgoing.writeBytes(sender + ":" + outMessage);
                                 System.out.println("<<< " + sender + ":" + outMessage);
                                 socket.close();
-                            } catch (IOException e) {
-                                System.out.println(e.getMessage());
+                            } catch (Exception e) {
                             }
                         }
                     }
