@@ -39,10 +39,10 @@ public class Main {
     public static void main(String[] args) {
         // Instantiate the windows:
         os = new OpenSessionDialog(
-                Main.m, Palette.deepTaupe, Palette.paynesGrey, Palette.middleRedPurple, "New Session", 200, 125);
+                Main.m, Palette.desertSand, Palette.paynesGrey, Palette.middleRedPurple, "New Session", 200, 125);
         
         ds = new DeleteSessionDialog(
-                Main.m, Palette.deepTaupe, Palette.paynesGrey, Palette.middleRedPurple, "Delete Session", 250, 200);
+                Main.m, Palette.desertSand, Palette.paynesGrey, Palette.middleRedPurple, "Delete Session", 250, 200);
         
         // Acquire a port and open a socket.
         for (int i = 9090; i < Math.pow(2, 16); i++) {
@@ -84,7 +84,7 @@ public class Main {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                l = new Login(Palette.deepTaupe, Palette.paynesGrey,
+                l = new Login(Palette.desertSand, Palette.paynesGrey,
                         Palette.middleRedPurple, "Log In", WIDTH/4, HEIGHT/4);
             }
         });

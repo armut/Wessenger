@@ -25,6 +25,8 @@ public class InputPane extends JPanel {
         
         add(jtfMessage, BorderLayout.CENTER);
         add(jbSend, BorderLayout.LINE_END);
+        
+        setBackground(Palette.desertSand);
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(
                 Palette.desertSand, 3), "Message"));
     }

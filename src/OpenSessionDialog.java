@@ -20,7 +20,7 @@ public class OpenSessionDialog extends Floris {
         
         JPanel jpnlLoom = new JPanel();
         jpnlLoom.setLayout(new BoxLayout(jpnlLoom, BoxLayout.Y_AXIS));
-        jpnlLoom.setBorder(BorderFactory.createLineBorder(bgColor, 10));
+        jpnlLoom.setBorder(BorderFactory.createLineBorder(bgColor, 15));
         jpnlLoom.setBackground(bgColor);
         
         jtfSessionName = new JTextField();

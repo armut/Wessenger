@@ -15,6 +15,7 @@ public class SessionHistoryPane extends JPanel {
         JScrollPane scrollPane = new JScrollPane(jpnlSession);
         
         add(scrollPane);
+        setBackground(Palette.desertSand);
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(
                 Palette.desertSand, 3), "Session History"));
     }

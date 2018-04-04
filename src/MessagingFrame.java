@@ -17,7 +17,7 @@ public class MessagingFrame extends Fenestra {
                           String title, int width, int height) {
         super(bgColor, captionColor, titleColor, title, width, height);
         
-        sessionPane = new SessionPane(Palette.mistyRose, 200, height);
+        sessionPane = new SessionPane(Palette.desertSand, 200, height);
         sessionHistoryPane = new SessionHistoryPane();
         
         JPanel jpnlLoom = new JPanel(new BorderLayout());
