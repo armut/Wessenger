@@ -18,22 +18,30 @@ public class OpenSessionDialog extends Floris {
         super(parent, bgColor, captionColor, titleColor, title, width, height);
         JPanel jpnlLoom = new JPanel();
         jpnlLoom.setLayout(new BoxLayout(jpnlLoom, BoxLayout.Y_AXIS));
+        jpnlLoom.setBorder(BorderFactory.createLineBorder(bgColor, 10));
+        jpnlLoom.setBackground(bgColor);
+        
         jtfSessionName = new JTextField();
+        jtfSessionName.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
         jcUsers = new JComboBox<UserGroup>();
+        jcUsers.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
         ArrayList<UserGroup> groups = Main.fetchUserGroups();
-        if (groups != null)
-        {
+        if (groups != null) {
             for (UserGroup ug : groups) {
                 jcUsers.addItem(ug);
             }
-        } else
-            System.out.println("Heyooo");
+        }
         
         jbOpen = new JButton("Open");
         jbOpen.addActionListener(new OpenListener());
-        
+        jbOpen.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
         jpnlLoom.add(jtfSessionName);
+        jpnlLoom.add(Box.createRigidArea(new Dimension(0, 5)));
         jpnlLoom.add(jcUsers);
+        jpnlLoom.add(Box.createRigidArea(new Dimension(0, 5)));
         jpnlLoom.add(jbOpen);
         add(jpnlLoom);
     }

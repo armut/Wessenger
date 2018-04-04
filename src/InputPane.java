@@ -1,3 +1,4 @@
+import com.sun.org.apache.xpath.internal.SourceTree;
 import fenestra.Palette;
 
 import javax.swing.*;
@@ -31,7 +32,11 @@ public class InputPane extends JPanel {
     private class SendListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            Main.sendMessage(jtfMessage.getText());
+            if (!jtfMessage.getText().equals("") && Main.currentSessionId != -1)
+                Main.sendMessage(jtfMessage.getText());
+            else
+                System.out.println("Are you sure you have written something" +
+                        " and selected a session to send the message to?");
         }
     }
 }

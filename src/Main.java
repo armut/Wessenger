@@ -21,6 +21,8 @@ import java.util.Calendar;
  */
 public class Main {
     public static MessagingFrame m;
+    public static OpenSessionDialog os;
+    public static DeleteSessionDialog ds;
     public static Login l;
     public static final int WIDTH = 640;
     public static final int HEIGHT = 480;
@@ -35,6 +37,13 @@ public class Main {
     public static Thread listenerThread;
     
     public static void main(String[] args) {
+        // Instantiate the windows:
+        os = new OpenSessionDialog(
+                Main.m, Palette.deepTaupe, Palette.paynesGrey, Palette.middleRedPurple, "New Session", 200, 125);
+        
+        ds = new DeleteSessionDialog(
+                Main.m, Palette.deepTaupe, Palette.paynesGrey, Palette.middleRedPurple, "Delete Session", 200, 400);
+        
         // Acquire a port and open a socket.
         for (int i = 9090; i < Math.pow(2, 16); i++) {
             try {
@@ -125,7 +134,7 @@ public class Main {
                 return false;
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e.getMessage() + " Is server running?");
             return false;
         } finally {
             DBCon.disconnect();
@@ -154,7 +163,7 @@ public class Main {
         });
     }
     
-    public static void loadSessions(SessionPane sessionPane) {
+    public static void loadSessions(SessionPaneBase sessionPane) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

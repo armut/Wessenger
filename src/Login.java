@@ -2,6 +2,7 @@ import fenestra.Fenestra;
 import fenestra.Palette;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,16 +20,25 @@ public class Login extends Fenestra {
                  String title, int width, int height) {
         super(bgColor, captionColor, titleColor, title, width, height);
         
-        JPanel jpnlLoom = new JPanel(new BorderLayout());
-        jtfLogin = new JTextField("default_user");
-        jtfHostName = new JTextField("127.0.0.1");
+        JPanel jpnlLoom = new JPanel();
+        jpnlLoom.setLayout(new BoxLayout(jpnlLoom, BoxLayout.Y_AXIS));
+        jpnlLoom.setBorder(BorderFactory.createLineBorder(bgColor, 10));
         
+        jtfLogin = new JTextField("default_user");
+        jtfLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        jtfHostName = new JTextField("127.0.0.1");
+        jtfHostName.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
         jbLogin = new JButton("Log in");
         jbLogin.addActionListener(new LoginListener());
+        jbLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        jpnlLoom.add(jtfLogin, BorderLayout.PAGE_START);
-        jpnlLoom.add(jtfHostName, BorderLayout.CENTER);
-        jpnlLoom.add(jbLogin, BorderLayout.PAGE_END);
+        jpnlLoom.add(jtfLogin);
+        jpnlLoom.add(Box.createRigidArea(new Dimension(0, 5)));
+        jpnlLoom.add(jtfHostName);
+        jpnlLoom.add(Box.createRigidArea(new Dimension(0, 5)));
+        jpnlLoom.add(jbLogin);
         jpnlLoom.setBackground(bgColor);
         add(jpnlLoom);
     }
@@ -42,7 +52,7 @@ public class Login extends Fenestra {
                     @Override
                     public void run() {
                         Main.m = new MessagingFrame(Palette.deepTaupe, Palette.paynesGrey,
-                                Palette.middleRedPurple, "MessagingFrame Application - " + Main.currentUserName, Main.WIDTH, Main.HEIGHT);
+                                Palette.middleRedPurple, "Wessenger - " + Main.currentUserName, Main.WIDTH, Main.HEIGHT);
                         Login.this.dispose();
                     }
                 });
