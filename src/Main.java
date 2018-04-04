@@ -313,7 +313,8 @@ public class Main {
             if (id != -1) {
                 ArrayList<UserGroup.User> users = group.getUsers();
                 for( UserGroup.User user : users ) {
-                    statement.executeUpdate("insert into session_user_lookup (session_id, user_id) " +
+                    if (user.getId() != currentUserId)
+                        statement.executeUpdate("insert into session_user_lookup (session_id, user_id) " +
                             "values(" + String.valueOf(id) + "," + user.getId() + ")");
                 }
                 

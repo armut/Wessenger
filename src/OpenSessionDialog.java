@@ -53,7 +53,6 @@ public class OpenSessionDialog extends Floris {
         public void actionPerformed(ActionEvent actionEvent) {
             Main.openSession(jtfSessionName.getText(), (UserGroup)jcUsers.getSelectedItem());
             OpenSessionDialog.this.dispose();
-            Main.loadSessions(Main.m.getSessionPane());
         }
     }
 }

@@ -24,10 +24,10 @@ public class Login extends Fenestra {
         jpnlLoom.setLayout(new BoxLayout(jpnlLoom, BoxLayout.Y_AXIS));
         jpnlLoom.setBorder(BorderFactory.createLineBorder(bgColor, 10));
         
-        jtfLogin = new JTextField("default_user");
+        jtfLogin = new JTextField("user name");
         jtfLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        jtfHostName = new JTextField("127.0.0.1");
+        jtfHostName = new JTextField("host address");
         jtfHostName.setAlignmentX(Component.CENTER_ALIGNMENT);
     
         jbLogin = new JButton("Log in");
