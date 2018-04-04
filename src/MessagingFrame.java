@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 
 /**
  * zamma on 3/29/18.
@@ -53,9 +52,6 @@ public class MessagingFrame extends Fenestra {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
                 super.windowClosing(windowEvent);
-                System.out.println("meraba");
-    
-                
             }
         });
     }

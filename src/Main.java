@@ -42,7 +42,7 @@ public class Main {
                 Main.m, Palette.deepTaupe, Palette.paynesGrey, Palette.middleRedPurple, "New Session", 200, 125);
         
         ds = new DeleteSessionDialog(
-                Main.m, Palette.deepTaupe, Palette.paynesGrey, Palette.middleRedPurple, "Delete Session", 200, 400);
+                Main.m, Palette.deepTaupe, Palette.paynesGrey, Palette.middleRedPurple, "Delete Session", 250, 200);
         
         // Acquire a port and open a socket.
         for (int i = 9090; i < Math.pow(2, 16); i++) {
@@ -99,7 +99,7 @@ public class Main {
         String sender = getNickNameById(receipt.split(":")[0]);
         String messageBody = receipt.split(":")[1];
         m.getSessionHistoryPane().getPane().add(
-                new MessageBox(sender, String.valueOf(Calendar.getInstance().getTime().getTime()), messageBody));
+                new MessageBox(sender, String.valueOf(Calendar.getInstance().getTime().getTime()), messageBody, false));
         m.getSessionHistoryPane().getPane().revalidate();
         m.getSessionHistoryPane().getPane().repaint();
     }
@@ -149,7 +149,7 @@ public class Main {
                     DBCon.connect();
                     Statement statement = DBCon.conn.createStatement();
                     ResultSet rs = statement.executeQuery(
-                            "select `date`, message, nick_name FROM " +
+                            "select `date`, message, nick_name, user_id FROM " +
                                     "session_history join user on session_history.user_id=user.id WHERE " +
                                     "session_id=" + String.valueOf(currentSessionId) + " " +
                                     "order by `date`");
@@ -187,18 +187,24 @@ public class Main {
             }
         });
     }
-    
+        
     public static void populateSessionHistory(ResultSet rs) throws SQLException {
         JPanel pane = m.getSessionHistoryPane().getPane();
-        pane.removeAll();
-        pane.revalidate();
-        pane.repaint();
+        clearPanel(pane);
         while (rs.next()) {
-            pane.add(
-                    new MessageBox(rs.getString("nick_name"), rs.getString("date"), rs.getString("message")));
+            if (rs.getInt("user_id") != currentUserId)
+                pane.add(new MessageBox(rs.getString("nick_name"), rs.getString("date"), rs.getString("message"), false));
+            else
+                pane.add(new MessageBox(rs.getString("nick_name"), rs.getString("date"), rs.getString("message"), true));
             pane.revalidate();
             pane.repaint();
         }
+    }
+    
+    public static void clearPanel(JPanel pane) {
+        pane.removeAll();
+        pane.revalidate();
+        pane.repaint();
     }
     
     public static void notifyRemote(int userId, String localHost) throws IOException {
@@ -264,7 +270,8 @@ public class Main {
                                 "insert into session_history (`date`, message, user_id, session_id) " +
                                         "values(DATETIME('now')" + ",\"" + message + "\"," +
                                         String.valueOf(currentUserId) + "," + String.valueOf(currentSessionId) + ")");
-                        m.getSessionHistoryPane().getPane().add(new MessageBox(currentUserName, String.valueOf(currentDate), message));
+                        m.getSessionHistoryPane().getPane().add(
+                                new MessageBox(currentUserName, String.valueOf(currentDate), message, true));
                         m.getSessionHistoryPane().getPane().revalidate();
                         m.getSessionHistoryPane().getPane().repaint();
                     } catch (SQLException e) {
@@ -274,6 +281,21 @@ public class Main {
                     }
                 }
             });
+        }
+    }
+    
+    public static void deleteSession(int sessionId) {
+        try {
+            DBCon.connect();
+            Statement statement = DBCon.conn.createStatement();
+            statement.executeUpdate("delete from Session where id=" + String.valueOf(sessionId));
+            // Other related entries will be deleted cascaded.
+            // Refresh session pane on the messaging window:
+            loadSessions(m.getSessionPane());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            DBCon.disconnect();
         }
     }
     
@@ -298,6 +320,7 @@ public class Main {
                 statement.executeUpdate("insert into session_user_lookup (session_id, user_id)" +
                         " values(" + String.valueOf(id) + "," + currentUserId + ")");
             }
+            loadSessions(m.getSessionPane());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {

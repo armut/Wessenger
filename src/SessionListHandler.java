@@ -15,11 +15,17 @@ public class SessionListHandler implements ListSelectionListener {
     @Override
     public void valueChanged(ListSelectionEvent listSelectionEvent) {
         if (!listSelectionEvent.getValueIsAdjusting() && sessionTable.getModel().getRowCount() > 0) {
-            Main.currentSessionId = (int)tableModel.getValueAt(
-                    sessionTable.convertRowIndexToModel(sessionTable.getSelectedRow()),
-                    sessionTable.getSelectedColumn() + 1
-            );
+            if (sessionTable.getSelectedRow() != -1) {
+                Main.currentSessionId = (int) tableModel.getValueAt(
+                        sessionTable.convertRowIndexToModel(sessionTable.getSelectedRow()),
+                        sessionTable.getSelectedColumn() + 1
+                );
+            } else {
+                Main.currentSessionId = 0;
+                Main.clearPanel(Main.m.getSessionHistoryPane());
+            }
             Main.loadSessionHistory();
-        }
+        } else if (sessionTable.getModel().getRowCount() == 0)
+            Main.clearPanel(Main.m.getSessionHistoryPane());
     }
 }

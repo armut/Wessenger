@@ -34,4 +34,6 @@ public class SessionPaneBase extends JPanel {
     public SessionTableModel getSessionTableModel() {
         return tableModel;
     }
+    
+    public SessionTable getSessionTable() { return sessionTable; }
 }

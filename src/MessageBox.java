@@ -1,22 +1,36 @@
 import fenestra.Palette;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 
 /**
  * zamma on 3/31/18.
  */
 public class MessageBox extends JPanel {
-    public MessageBox(String nickName, String date, String message) {
-        JLabel jlblNick = new JLabel(nickName);
-        JLabel jlblDate = new JLabel(date);
-        JLabel jlblMessage = new JLabel(message);
+    public MessageBox(String nickName, String date, String message, boolean isItself) {
+        JPanel jpnlNickDate = new JPanel(new BorderLayout());
+        if (!isItself)
+            jpnlNickDate.setBackground(Palette.middleYellowRed);
+        else
+            jpnlNickDate.setBackground(Palette.aztecGold);
         
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(jlblNick, BorderLayout.PAGE_START);
-        add(jlblMessage, BorderLayout.CENTER);
-        add(jlblDate, BorderLayout.PAGE_END);
-        setBorder(BorderFactory.createLineBorder(Palette.vividCerulean, 2));
+        JLabel jlblNick = new JLabel(nickName);
+        jpnlNickDate.add(jlblNick, BorderLayout.LINE_START);
+        
+        JLabel jlblDate = new JLabel(date);
+        jpnlNickDate.add(jlblDate, BorderLayout.LINE_END);
+        
+        JPanel jpnlMessage = new JPanel();
+        JLabel jlblMessage = new JLabel(message);
+        jpnlMessage.add(jlblMessage);
+        
+        setLayout(new BorderLayout());
+        add(jpnlNickDate, BorderLayout.PAGE_START);
+        if (isItself)
+            add(jpnlMessage, BorderLayout.LINE_START);
+        else
+            add(jpnlMessage, BorderLayout.LINE_END);
+        // setBorder(BorderFactory.createLineBorder(Palette.vividCerulean, 2));
+        setMaximumSize(new Dimension(Main.m.getSessionHistoryPane().getWidth(), getPreferredSize().height));
     }
 }

@@ -16,6 +16,8 @@ public class OpenSessionDialog extends Floris {
     public OpenSessionDialog(Window parent, Color bgColor, Color captionColor,
                              Color titleColor, String title, int width, int height) {
         super(parent, bgColor, captionColor, titleColor, title, width, height);
+        setModal(true);
+        
         JPanel jpnlLoom = new JPanel();
         jpnlLoom.setLayout(new BoxLayout(jpnlLoom, BoxLayout.Y_AXIS));
         jpnlLoom.setBorder(BorderFactory.createLineBorder(bgColor, 10));
