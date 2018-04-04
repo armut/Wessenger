@@ -10,6 +10,8 @@ public class SearchListener implements ActionListener {
     
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        
+        if (jtfMessage.getText() != "") {
+            Main.searchInTheSession(jtfMessage.getText());
+        }
     }
 }

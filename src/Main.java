@@ -46,7 +46,7 @@ public class Main {
                 Main.m, Palette.desertSand, Palette.paynesGrey, Palette.middleRedPurple, "Delete Session", 250, 200);
     
         sd = new SearchDialog(
-                Main.m, Palette.desertSand, Palette.paynesGrey, Palette.middleRedPurple, "Search in the Current Session", 270, 200);
+                Main.m, Palette.desertSand, Palette.paynesGrey, Palette.middleRedPurple, "Search in the Current Session", 280, 250);
         
         // Acquire a port and open a socket.
         for (int i = 9090; i < Math.pow(2, 16); i++) {
@@ -100,7 +100,7 @@ public class Main {
         BufferedReader incoming = new BufferedReader(
                 new InputStreamReader(socket.getInputStream()));
         String receipt = incoming.readLine();
-        String sender = getNickNameById(receipt.split(":")[0]);
+        String sender = getNickNameById(receipt.split(":")[0], true);
         String messageBody = receipt.split(":")[1];
         m.getSessionHistoryPane().getPane().add(
                 new MessageBox(sender, String.valueOf(Calendar.getInstance().getTime().getTime()), messageBody, false));
@@ -108,7 +108,7 @@ public class Main {
         m.getSessionHistoryPane().getPane().repaint();
     }
     
-    private static String getNickNameById(String id) {
+    private static String getNickNameById(String id, boolean closeDB) {
         try {
             DBCon.connect();
             Statement statement = DBCon.conn.createStatement();
@@ -118,7 +118,8 @@ public class Main {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {
-            DBCon.disconnect();
+            if (closeDB)
+                DBCon.disconnect();
         }
         return "";
     }
@@ -325,6 +326,36 @@ public class Main {
                         " values(" + String.valueOf(id) + "," + currentUserId + ")");
             }
             loadSessions(m.getSessionPane());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            DBCon.disconnect();
+        }
+    }
+    
+    public static void searchInTheSession(String text) {
+        sd.getSessionHistoryPane().getPane().removeAll();
+        try {
+            DBCon.connect();
+            Statement statement = DBCon.conn.createStatement();
+            ResultSet rs = statement.executeQuery("select `date`, message, user_id" +
+                    " from session_history" +
+                    " where session_id=" + Main.currentSessionId + " and " +
+                    "message like \"%" + text + "%\" order by date");
+            while (rs.next()) {
+                int userId = rs.getInt("user_id");
+                String sender = getNickNameById(String.valueOf(userId), false);
+                String message = rs.getString("message");
+                String date = rs.getString("date");
+                if (userId != currentUserId)
+                    sd.getSessionHistoryPane().getPane().add(
+                        new MessageBox(sender, date, message, false));
+                else
+                    sd.getSessionHistoryPane().getPane().add(
+                            new MessageBox(sender, date, message, true));
+                sd.getSessionHistoryPane().getPane().revalidate();
+                sd.getSessionHistoryPane().getPane().repaint();
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {

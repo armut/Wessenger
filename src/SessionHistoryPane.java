@@ -1,7 +1,6 @@
 import fenestra.Palette;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * zamma on 3/29/18.
