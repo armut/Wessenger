@@ -1,6 +1,5 @@
 import fenestra.Fenestra;
 import fenestra.Palette;
-import jdk.internal.util.xml.impl.Input;
 
 import javax.swing.*;
 import java.awt.*;

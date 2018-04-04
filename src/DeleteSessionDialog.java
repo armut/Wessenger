@@ -45,7 +45,7 @@ public class DeleteSessionDialog extends Floris {
                                 sessionPane.getSessionTable().getSelectedRow()),
                         sessionPane.getSessionTable().getSelectedColumn() + 1);
                 Main.deleteSession(selectedSessionId);
-                Main.loadSessions(sessionPane);
+                sessionPane.getSessionTableModel().removeRow(sessionPane.getSessionTable().getSelectedRow());
             }
         }
     }

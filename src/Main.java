@@ -1,8 +1,5 @@
-import com.sun.istack.internal.Nullable;
 import fenestra.Palette;
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
-import javax.swing.plaf.nimbus.State;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -220,7 +217,6 @@ public class Main {
         socket.close();
     }
     
-    @Nullable
     public static String getSessionRecipients() {
         String result = "";
         try {

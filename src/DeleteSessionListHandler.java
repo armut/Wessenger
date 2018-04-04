@@ -20,6 +20,5 @@ public class DeleteSessionListHandler implements ListSelectionListener {
         if (!listSelectionEvent.getValueIsAdjusting() && sessionTable.getModel().getRowCount() > 0) {
             
         }
-        
     }
 }

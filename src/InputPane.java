@@ -1,9 +1,7 @@
-import com.sun.org.apache.xpath.internal.SourceTree;
 import fenestra.Palette;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**

@@ -26,6 +26,6 @@ public class SessionListHandler implements ListSelectionListener {
             }
             Main.loadSessionHistory();
         } else if (sessionTable.getModel().getRowCount() == 0)
-            Main.clearPanel(Main.m.getSessionHistoryPane());
+            Main.m.getSessionHistoryPane().getPane().removeAll();
     }
 }
