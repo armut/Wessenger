@@ -58,17 +58,20 @@ And from Frodo's view:
 
 You can also search within all the past messages via search dialog opened under `SEARCH` menu.
 
-![Search1](ss/search.png?raw=true)
+![Search1](ss/search1.png?raw=true)
 
 Deleting the sessions is also starightforward, through the `Delete Session` dialog located under `SESSIONS` menu.
 
 
 Please note that, this application hardly ever does any healthchecks. The main purpose in developing this application was to
-practice in Java socket programming. If you issue the command in the right order, you should be good to go.
+practice in Java socket programming. If you run everything in the right order, you should be good to go.
 
 After starting the `Server` program, it listens on the specified port. When a client starts running, it sends an information 
-message to the server to be registered with its ip and port address. So does other clients. Server has a hash table in which
-it keeps user-address matchings. So after each demonstration, it will be better to restart the server. 
+message to the server to be registered with its ip and port address. So does every other clients. Server has a hash table in which
+it keeps user-address matchings. So after each demonstration, it will be better to restart the server, but it would be better not to
+need restarting.
+
+Clients send everything to the server. Server, then, parses the message from one client and sends it to its desired recipients.
 
 Here is an output from the server's log:
 
