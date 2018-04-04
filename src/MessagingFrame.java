@@ -1,5 +1,6 @@
 import fenestra.Fenestra;
 import fenestra.Palette;
+import jdk.internal.util.xml.impl.Input;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,7 @@ public class MessagingFrame extends Fenestra {
         super(bgColor, captionColor, titleColor, title, width, height);
         
         sessionPane = new SessionPane(Palette.desertSand, 200, height);
-        sessionHistoryPane = new SessionHistoryPane();
+        sessionHistoryPane = new SessionHistoryPane("Session History");
         
         JPanel jpnlLoom = new JPanel(new BorderLayout());
         jpnlLoom.setBackground(bgColor);
@@ -26,7 +27,9 @@ public class MessagingFrame extends Fenestra {
         jpnlLoom.add(sessionPane, BorderLayout.LINE_START);
         
         JPanel jpnlInnerLoom = new JPanel(new BorderLayout());
-        jpnlInnerLoom.add(new InputPane(), BorderLayout.PAGE_START);
+        InputPane inputPane = new InputPane("Message", "Send");
+        inputPane.setInputListener(new SendListener(inputPane.getTextField()));
+        jpnlInnerLoom.add(inputPane, BorderLayout.PAGE_START);
         jpnlInnerLoom.add(sessionHistoryPane, BorderLayout.CENTER);
         
         jpnlLoom.add(jpnlInnerLoom, BorderLayout.CENTER);

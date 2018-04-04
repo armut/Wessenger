@@ -11,9 +11,11 @@ public class MainMenu extends MenuBase {
 
         // JMenu instances:
         JMenu sessionsMenu = generateMenu("SESSIONS", generateSessionsMenu());
+        JMenu searchMenu = generateMenu("SEARCH", generateSearchMenu());
 
         // Adding JMenus to JMenuBar:
         getMenuBar().add(sessionsMenu);
+        getMenuBar().add(searchMenu);
 
         // Adding JMenuBar to the panel:
         add(getMenuBar(), BorderLayout.LINE_START);
@@ -29,6 +31,15 @@ public class MainMenu extends MenuBase {
             item.addActionListener(this);
         return sessionsMenuItems;
     }
+    
+    private ArrayList<JMenuItem> generateSearchMenu() {
+        ArrayList<JMenuItem> sessionsMenuItems = new ArrayList<>();
+        JMenuItem jmSearchSession = generateMenuItem("SEARCH IN THIS SESSION");
+        sessionsMenuItems.add(jmSearchSession);
+        for(JMenuItem item : sessionsMenuItems)
+            item.addActionListener(this);
+        return sessionsMenuItems;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -37,6 +48,8 @@ public class MainMenu extends MenuBase {
         } else if (e.getActionCommand().equals("DELETE SESSION")) {
             Main.loadSessions(Main.ds.getSessionPane());
             Main.ds.setVisible(true);
+        } else if (e.getActionCommand().equals("SEARCH IN THIS SESSION")) {
+            Main.sd.setVisible(true);
         }
     }
 }

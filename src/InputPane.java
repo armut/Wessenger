@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 public class InputPane extends JPanel {
     private JTextField jtfMessage;
     private JButton jbSend;
-    public InputPane() {
+    public InputPane(String caption, String buttonText) {
         setLayout(new BorderLayout());
         
         JPanel jpnlMessage = new JPanel();
@@ -20,25 +20,19 @@ public class InputPane extends JPanel {
         jtfMessage = new JTextField("");
         jpnlMessage.add(jtfMessage);
         
-        jbSend = new JButton("Send");
-        jbSend.addActionListener(new SendListener());
+        jbSend = new JButton(buttonText);
         
         add(jtfMessage, BorderLayout.CENTER);
         add(jbSend, BorderLayout.LINE_END);
         
         setBackground(Palette.desertSand);
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(
-                Palette.desertSand, 3), "Message"));
+                Palette.desertSand, 3), caption));
     }
     
-    private class SendListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-            if (!jtfMessage.getText().equals("") && Main.currentSessionId != -1)
-                Main.sendMessage(jtfMessage.getText());
-            else
-                System.out.println("Are you sure you have written something" +
-                        " and selected a session to send the message to?");
-        }
+    public void setInputListener(ActionListener listener) {
+        jbSend.addActionListener(listener);
     }
+    
+    public JTextField getTextField() { return jtfMessage; }
 }

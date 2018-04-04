@@ -23,6 +23,7 @@ public class Main {
     public static MessagingFrame m;
     public static OpenSessionDialog os;
     public static DeleteSessionDialog ds;
+    public static SearchDialog sd;
     public static Login l;
     public static final int WIDTH = 640;
     public static final int HEIGHT = 480;
@@ -43,6 +44,9 @@ public class Main {
         
         ds = new DeleteSessionDialog(
                 Main.m, Palette.desertSand, Palette.paynesGrey, Palette.middleRedPurple, "Delete Session", 250, 200);
+    
+        sd = new SearchDialog(
+                Main.m, Palette.desertSand, Palette.paynesGrey, Palette.middleRedPurple, "Search in the Current Session", 270, 200);
         
         // Acquire a port and open a socket.
         for (int i = 9090; i < Math.pow(2, 16); i++) {
